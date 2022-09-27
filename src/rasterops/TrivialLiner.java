@@ -17,15 +17,15 @@ public class TrivialLiner<P> implements Liner<P>{
         }
 
         if (Math.abs(r2 - r1) < Math.abs(c2 - c1)) { //iterate over c
-            if (c1 > c2) { // swap start and end
+            if (c1 > c2) { // swap start and end points
 
             }
             // iterating over c and calculating r
         } else { // iterate over r
-            if (r1 > r2) { // swap start and end
+            if (r1 > r2) { // swap start and end points
 
             }
-            // iterating over r and calculating r
+            // iterating over r and calculating c
         }
     }
 }
