@@ -1,7 +1,18 @@
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import rasterdata.Presentable;
+import rasterdata.RasterImage;
+import rasterdata.RasterImageBI;
+import rasterops.Liner;
+import rasterops.TrivialLiner;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
@@ -20,7 +31,10 @@ public class Canvas {
 
 	private JFrame frame;
 	private JPanel panel;
-	private BufferedImage img;
+	private final @NotNull RasterImage<Integer> img;
+	private final @NotNull Presentable<Graphics> presenter;
+	private final @NotNull Liner<Integer> liner;
+	private int c1, r1, c2, r2;
 
 	public Canvas(int width, int height) {
 		frame = new JFrame();
@@ -30,7 +44,10 @@ public class Canvas {
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		final @NotNull RasterImageBI auxRasterImageBI = new RasterImageBI(width, height);
+		img = auxRasterImageBI;
+		presenter = auxRasterImageBI;
+		liner = new TrivialLiner<>();
 
 		panel = new JPanel() {
 			private static final long serialVersionUID = 1L;
@@ -42,6 +59,23 @@ public class Canvas {
 			}
 		};
 
+		panel.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				clear();
+				liner.drawLine(img, c1, r1, e.getX(), e.getY(), 0x0000ff);
+				present();
+			}
+		});
+
+		panel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				c1 = e.getX();
+				r1 = e.getY();
+			}
+		});
+
 		panel.setPreferredSize(new Dimension(width, height));
 
 		frame.add(panel, BorderLayout.CENTER);
@@ -50,23 +84,24 @@ public class Canvas {
 	}
 
 	public void clear() {
-		Graphics gr = img.getGraphics();
-		gr.setColor(new Color(0x2f2f2f));
-		gr.fillRect(0, 0, img.getWidth(), img.getHeight());
+		img.clear(0x2f2f2f);
 	}
 
-	public void present(Graphics graphics) {
-		graphics.drawImage(img, 0, 0, null);
+	public void present(final @NotNull Graphics graphics) {
+		presenter.present(graphics);
 	}
 
-	public void draw() {
-		clear();
-		img.setRGB(10, 10, 0xffff00);
+	public void present() {
+		final @Nullable Graphics g = panel.getGraphics();
+		if (g != null) {
+			presenter.present(g);
+		}
 	}
 
 	public void start() {
-		draw();
-		panel.repaint();
+		clear();
+//		liner.drawLine(img, 10, 10, 20, 10, 0xffff00);
+		present();
 	}
 
 	public static void main(String[] args) {

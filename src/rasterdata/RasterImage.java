@@ -1,5 +1,8 @@
 package rasterdata;
 
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.processing.SupportedAnnotationTypes;
 import java.util.Optional;
 
 /**
@@ -35,4 +38,10 @@ public interface RasterImage<P> {
      * @param newValue new pixel value
      */
     void setPixel(int c, int r, P newValue);
+
+    /**
+     * Sets values of all pixels to the provided pixel value
+     * @param newValue new pixel value
+     */
+    void clear(final @NotNull P newValue);
 }
