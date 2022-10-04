@@ -1,3 +1,4 @@
+import objdata.Points;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rasterdata.Presentable;
@@ -14,6 +15,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,7 +31,7 @@ import javax.swing.WindowConstants;
  */
 
 public class Canvas {
-
+	List <Points> vrcholy = new ArrayList<>();
 	private JFrame frame;
 	private JPanel panel;
 	private final @NotNull RasterImage<Integer> img;
@@ -71,12 +74,21 @@ public class Canvas {
 		panel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				c1 = e.getX();
-				r1 = e.getY();
+				if (e.getButton() == MouseEvent.BUTTON3){
+					Points p = new Points(e.getX(),e.getY());
+					vrcholy.add(p);
+				} else if (e.getButton() == MouseEvent.BUTTON2) {
+					Points k = new Points (vrcholy.get(vrcholy.indexOf(p) - 1));
+					liner.drawLine();
+				}else {
+					c1 = e.getX();
+					r1 = e.getY();
+				}
 			}
 		});
 
-		panel.setPreferredSize(new Dimension(width, height));
+
+	panel.setPreferredSize(new Dimension(width, height));
 
 		frame.add(panel, BorderLayout.CENTER);
 		frame.pack();
