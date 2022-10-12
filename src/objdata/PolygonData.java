@@ -5,13 +5,13 @@ import java.util.List;
 
 public class PolygonData {
 
-    public List <Points> PolPoints = new ArrayList<>();
+    public List <Point> PolPoints = new ArrayList<>();
 
 
-    public List<Points> getPolPoints() {
+    public List<Point> getPolPoints() {
         return PolPoints;
     }
-    public boolean addPolPoints(Points point){
+    public boolean addPolPoints(Point point){
         return PolPoints.add(point);
     }
 }
