@@ -32,6 +32,8 @@ public class Canvas {
     private final @NotNull Presentable<Graphics> presenter;
     private final @NotNull Liner<Integer> liner;
     private int c1, r1, c2, r2;
+    private int mouseX;
+    private int mouseY;
 
     public Canvas(int width, int height) {
         frame = new JFrame();
@@ -64,24 +66,27 @@ public class Canvas {
         panel.requestFocus();
         panel.requestFocusInWindow();
 
-        panel.addKeyListener(
-                new KeyAdapter() {
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_T) {
-                            java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
-                            Point point = new Point((int) p.getX(), (int) p.getY());
-                            vrcholy.add(point);
-                            if (vrcholy.size() == 2) {
-                                Point firstPoint = vrcholy.get(0);
-                                Point lastPoint = vrcholy.get(vrcholy.size() - 1);
-                                liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
-                                present();
-                            }
+        panel.addKeyListener(new KeyAdapter() {
+                                 @Override
 
-                        }
-                    }
-                }
+
+                                 public void keyReleased(KeyEvent e) {
+                                     if (e.getKeyCode() == KeyEvent.VK_T) {
+                                         Point point = new Point(mouseX, mouseY);
+                                         vrcholy.add(point);
+                                         if (vrcholy.size() == 2) {
+                                             Point firstPoint = vrcholy.get(0);
+                                             Point secondPoint = vrcholy.get(1);
+                                             Point lastPoint = vrcholy.get(2);
+                                             liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
+                                             liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), secondPoint.getX(), secondPoint.getY(), 0x0180aa);
+                                             present();
+                                         }
+                                     }
+                                 }
+                             }
+
+
         );
 
         panel.addMouseMotionListener(new MouseMotionAdapter() {
@@ -92,6 +97,12 @@ public class Canvas {
                 liner.drawLine(img, c1, r1, e.getX(), e.getY(), 0x0000ff);
                 present();
 
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
             }
         });
 
