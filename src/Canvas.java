@@ -26,6 +26,7 @@ import javax.swing.WindowConstants;
 
 public class Canvas {
     List<Point> vrcholy = new ArrayList<>();
+    List<Point> vrcholyTrojuhelnik = new ArrayList<>();
     private JFrame frame;
     private JPanel panel;
     private final @NotNull RasterImage<Integer> img;
@@ -66,22 +67,48 @@ public class Canvas {
         panel.requestFocus();
         panel.requestFocusInWindow();
 
+        panel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                vrcholy.clear();
+                clear();
+                liner.drawDashedLine(img, c1, r1, e.getX(), e.getY(), 0x0000ff);
+                present();
+
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseY = e.getY();
+                mouseX = e.getX();
+                if (vrcholyTrojuhelnik.size() == 2) {
+                    vrcholy.clear();
+                    clear();
+                    Point firstPoint = vrcholyTrojuhelnik.get(0);
+                    Point lastPoint = vrcholyTrojuhelnik.get(1);
+                    liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
+                    liner.drawLine(img, firstPoint.getX(), firstPoint.getY(), mouseX, mouseY, 0x0180aa);
+                    liner.drawLine(img, mouseX, mouseY, lastPoint.getX(), lastPoint.getY(),  0x0180aa);
+
+                    present();
+                }
+            }
+        });
+
         panel.addKeyListener(new KeyAdapter() {
                                  @Override
-
-
                                  public void keyReleased(KeyEvent e) {
                                      if (e.getKeyCode() == KeyEvent.VK_T) {
                                          Point point = new Point(mouseX, mouseY);
-                                         vrcholy.add(point);
-                                         if (vrcholy.size() == 2) {
-                                             Point firstPoint = vrcholy.get(0);
-                                             Point secondPoint = vrcholy.get(1);
-                                             Point lastPoint = vrcholy.get(2);
+                                         vrcholyTrojuhelnik.add(point);
+                                         if (vrcholyTrojuhelnik.size() == 2) {
+                                             clear();
+                                             Point firstPoint = vrcholyTrojuhelnik.get(0);
+                                             Point lastPoint = vrcholyTrojuhelnik.get(1);
                                              liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
-                                             liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), secondPoint.getX(), secondPoint.getY(), 0x0180aa);
                                              present();
                                          }
+
                                      }
                                  }
                              }
@@ -89,27 +116,15 @@ public class Canvas {
 
         );
 
-        panel.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                vrcholy.clear();
-                clear();
-                liner.drawLine(img, c1, r1, e.getX(), e.getY(), 0x0000ff);
-                present();
-
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-            }
-        });
 
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
+                    if (vrcholyTrojuhelnik.size()==2){
+                        vrcholyTrojuhelnik.clear();
+                        clear();
+                    }
                     Point p = new Point(e.getX(), e.getY());
                     vrcholy.add(p);
                     if (vrcholy.size() != 1) {
@@ -119,6 +134,10 @@ public class Canvas {
                         present();
                     }
                 } else if (e.getButton() == MouseEvent.BUTTON2) {
+                    if (vrcholyTrojuhelnik.size()==2){
+                        vrcholyTrojuhelnik.clear();
+                        clear();
+                    }
                     Point firstPoint = vrcholy.get(0);
                     Point lastPoint = vrcholy.get(vrcholy.size() - 1);
                     liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
