@@ -88,7 +88,7 @@ public class Canvas {
                     Point lastPoint = vrcholyTrojuhelnik.get(1);
                     liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
                     liner.drawLine(img, firstPoint.getX(), firstPoint.getY(), mouseX, mouseY, 0x0180aa);
-                    liner.drawLine(img, mouseX, mouseY, lastPoint.getX(), lastPoint.getY(),  0x0180aa);
+                    liner.drawLine(img, mouseX, mouseY, lastPoint.getX(), lastPoint.getY(), 0x0180aa);
 
                     present();
                 }
@@ -96,32 +96,43 @@ public class Canvas {
         });
 
         panel.addKeyListener(new KeyAdapter() {
-                                 @Override
-                                 public void keyReleased(KeyEvent e) {
-                                     if (e.getKeyCode() == KeyEvent.VK_T) {
-                                         Point point = new Point(mouseX, mouseY);
-                                         vrcholyTrojuhelnik.add(point);
-                                         if (vrcholyTrojuhelnik.size() == 2) {
-                                             clear();
-                                             Point firstPoint = vrcholyTrojuhelnik.get(0);
-                                             Point lastPoint = vrcholyTrojuhelnik.get(1);
-                                             liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
-                                             present();
-                                         }
+            @Override
+            public void keyReleased(KeyEvent e) {
 
-                                     }
-                                 }
-                             }
+                if (e.getKeyCode() == KeyEvent.VK_T) {
+                    Point point = new Point(mouseX, mouseY);
+                    vrcholyTrojuhelnik.add(point);
+                    if (vrcholyTrojuhelnik.size() == 2) {
+                        clear();
+                        Point firstPoint = vrcholyTrojuhelnik.get(0);
+                        Point lastPoint = vrcholyTrojuhelnik.get(1);
+                        liner.drawLine(img, lastPoint.getX(), lastPoint.getY(), firstPoint.getX(), firstPoint.getY(), 0x0180aa);
+                        present();
+                    }
+
+                }
+
+            }
+
+            public void keyPressed(KeyEvent e) {
+
+                if (e.getKeyCode() == KeyEvent.VK_C) {
+                    clear();
+                    vrcholy.clear();
+                    vrcholyTrojuhelnik.clear();
+                }
+
+            }
 
 
-        );
+        });
 
 
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    if (vrcholyTrojuhelnik.size()==2){
+                    if (vrcholyTrojuhelnik.size() == 2) {
                         vrcholyTrojuhelnik.clear();
                         clear();
                     }
@@ -134,7 +145,7 @@ public class Canvas {
                         present();
                     }
                 } else if (e.getButton() == MouseEvent.BUTTON2) {
-                    if (vrcholyTrojuhelnik.size()==2){
+                    if (vrcholyTrojuhelnik.size() == 2) {
                         vrcholyTrojuhelnik.clear();
                         clear();
                     }
